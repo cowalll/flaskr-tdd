@@ -74,6 +74,19 @@ def test_messages(client):
     assert b"&lt;Hello&gt;" in rv.data
     assert b"<strong>HTML</strong> allowed here" in rv.data
 
+def test_search(client):
+    """Ensure that user can search messages"""
+    login(client, app.config["USERNAME"], app.config["PASSWORD"])
+    client.post(
+        "/add",
+        data=dict(title="Test title", text="Test text"),
+        follow_redirects=True,
+    )
+    rv = client.get('/search/?query=Test')
+
+    assert b"Test title" in rv.data
+    assert b"Test text" in rv.data
+
 def test_delete_message(client):
     """Ensure the messages are being deleted"""
     rv = client.get('/delete/1')
